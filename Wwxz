@@ -1,0 +1,97 @@
+local player = game.Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
+
+if not player then
+	warn("LocalScript não está rodando! Coloque-o em StarterGui ou StarterPlayerScripts.")
+	return
+end
+
+-- ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "wwxz hub"
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- Aba principal (frame)
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 420, 0, 250)
+frame.Position = UDim2.new(0.5, -210, 0.5, -125)
+frame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+frame.BorderSizePixel = 0
+frame.Visible = false
+frame.Parent = screenGui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 10)
+corner.Parent = frame
+
+-- Título
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(0, 200, 0, 25)
+title.Position = UDim2.new(1, -210, 0, 10)
+title.BackgroundTransparency = 1
+title.Text = "wwxz hub"
+title.Font = Enum.Font.Gotham
+title.TextSize = 16
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextXAlignment = Enum.TextXAlignment.Right
+title.Parent = frame
+
+-- Linha separadora
+local line = Instance.new("Frame")
+line.Size = UDim2.new(1, 0, 0, 2)
+line.Position = UDim2.new(0, 0, 0, 40)
+line.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+line.BorderSizePixel = 0
+line.Parent = frame
+
+-- Toggle button (imagem redonda, menor e arrastável)
+local toggleButton = Instance.new("ImageButton")
+toggleButton.Size = UDim2.new(0, 32, 0, 32) -- 🔥 menor agora
+toggleButton.Position = UDim2.new(0, 20, 0.87, 0)
+toggleButton.BackgroundTransparency = 1
+toggleButton.Image = "rbxassetid://92580216852732"
+toggleButton.Draggable = true
+toggleButton.Parent = screenGui
+
+-- Deixar o botão redondo
+local toggleCorner = Instance.new("UICorner")
+toggleCorner.CornerRadius = UDim.new(1, 0)
+toggleCorner.Parent = toggleButton
+
+-- Função de abrir/fechar a aba
+toggleButton.MouseButton1Click:Connect(function()
+	frame.Visible = not frame.Visible
+end)
+
+-- Arrastar a aba manualmente
+local dragging = false
+local dragInput, mousePos, framePos
+
+frame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		mousePos = input.Position
+		framePos = frame.Position
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+frame.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		dragInput = input
+	end
+end)
+
+UIS.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		local delta = input.Position - mousePos
+		frame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X,
+		                           framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+	end
+end)
+
+print("wwxz hub carregado com sucesso!")
